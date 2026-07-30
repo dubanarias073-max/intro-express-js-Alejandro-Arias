@@ -1,11 +1,13 @@
 import express from "express"
 import "dotenv/config"
+import cors from "cors"
 //const bodyParser = require('body-parser');//importacion commonjs
 import bodyParser from "body-parser";//importacion ES "module"
 
+
 const app = express();  
 const port = process.env.PORT || 3000;
-
+app.use(cors())
 //configurar el uso de body-parse para nuestra aplicacion - no lo estmos utilizando
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -17,7 +19,9 @@ app.get("/", function(req, res){
 //otro endpoint, funcion de flecha
 app.get("/productos", (req, res)=>{
     //usando template string ``
-    res.send(`<h1>Listado de productos</h1>
+    const orden = req.query.orden || "sin filtro"
+    const pagina =req.query.pagina || 1
+    res.send(`<h1>Listado de productos ${orden}, en la pagina ${pagina}</h1>
         <ol>
         <li>Televisor</li>
         <li>Celular</li>
