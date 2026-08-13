@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();  
 const port = 3000; 
 
+//midleware body-parser
+app.use(express.json());
+
 // Configuración para que ignore mayúsculas/minúsculas en las rutas de la URL
 app.set('case sensitive routing', false);
 
@@ -27,7 +30,15 @@ const listaPersonas = [
         "edad": 24,
         "correo": "carlos.andres@email.com",
         "imgPerfil": ""
-    }
+    },
+    {
+        "id":4,
+        "nombre": "Juan",
+        "edad": 19,
+        "correo": "juan@gmail.com",
+        "imgPerfil": ""
+}
+
 ];
 
 
@@ -71,7 +82,36 @@ app.get("/aprendices/nombre/:nombreRecibido", (req, res) => {
     res.json(aprendizEncontrado);
 });
 
-// Inicio del servidor HTTP
+app.post("/aprendices", (req, res) => {
+    const { nombre, edad, correo, imgPerfil } = req.body;
+    if (!nombre || nombre.trim().length < 3) {
+        return res.status(400).json({
+            error: "Validación fallida",
+            mensaje: "El nombre es obligatorio y debe tener al menos 3 caracteres."
+        });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!correo || !emailRegex.test(correo)) {
+        return res.status(400).json({
+            error: "Validación fallida",
+            mensaje: "El correo electrónico proporcionado no tiene un formato válido (ejemplo@dominio.com)."
+        });
+    }
+    const nuevoId = listaPersonas.length > 0 ? listaPersonas[listaPersonas.length - 1].id + 1 : 1;
+    const nuevoAprendiz = {
+        id: nuevoId,
+        nombre: nombre.trim(),
+        edad: parseInt(edad) || 0,
+        correo: correo.trim().toLowerCase(), // Guardamos en minúsculas por orden
+        imgPerfil: imgPerfil || ""
+    };
+    listaPersonas.push(nuevoAprendiz);
+    res.status(201).json({
+        "mensaje": "aprendiz creado exitosamente",
+        "Datos": nuevoAprendiz
+    });
+});
+
 app.listen(port, () => { 
     console.log(`Servidor en funcionamiento en: http://localhost:${port}`); 
 });

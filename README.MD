@@ -1,4 +1,7 @@
-instalar primero en la terminal : npm install express npm install express –save npm install cors
+instalar primero en la terminal : 
+npm install express 
+npm install express –save 
+npm install cors
 
 luego ejecuta: npm run dev
 
